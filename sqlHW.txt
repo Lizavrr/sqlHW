@@ -1,0 +1,106 @@
+CREATE TABLE PERSON(
+ 	ID INT PRIMARY KEY,
+	first_name VARCHAR(50),
+	last_name VARCHAR(50),
+	gender varchar(50),
+	age INT
+);
+
+insert into PERSON values
+(1, 'liza', 'skhirtladze', 'female', 16),
+(2, 'gio', 'beridze', 'male', 33),
+(3, 'nita', 'kopaliani', 'female', 37),
+(4, 'niko', 'beraia', 'male', 24),
+(5, 'beka', 'kerkadze', 'male', 41),
+(6, 'keso', 'davitashvili', 'female', 11);
+
+select * from PERSON;
+
+select * from PERSON
+where gender = 'male';
+
+select * from PERSON
+where gender ='female' and age>30;
+
+alter table PERSON
+add column working_experience int;
+UPDATE  PERSON
+SET working_experience=3
+WHERE gender = 'male' and age>25;
+
+select * from PERSON
+ORDER BY last_name;
+
+select * from PERSON
+WHERE first_name LIKE 'a%'
+OR last_name LIKE 'a%';
+
+CREATE TABLE STUDENTS(
+ 	ID int PRIMARY KEY,
+	name VARCHAR(50),
+	last_name VARCHAR(50),
+	id_num int,
+	towns_id int,
+	sqesi VARCHAR(50)
+);
+
+CREATE TABLE TOWNS (
+  	towns_id int,
+	towns_name varchar(50)
+);
+
+insert into STUDENTS values
+(1, 'lizi', 'skhirtladze', 1, 1, 'female'),
+(2, 'gio', 'beridze', 2, 2, 'male'),
+(3, 'nita', 'kopaliani', 3, 2, 'female'),
+(4, 'beka', 'kerkadze', 4, NULL, 'female');
+
+insert into TOWNS values
+(1, 'Tbilisi'),
+(2, 'Batumi'),
+(3, 'Kutaisi');
+
+SELECT s.*, t.towns_name
+FROM Students s
+LEFT JOIN Towns t ON s.towns_id = t.towns_id;
+
+CREATE TABLE SUBJECTS (
+ 	subject_id int PRIMARY KEY,
+	subject_name varchar(50)
+);
+
+insert into SUBJECTS values
+(1, 'math'),
+(2, 'english'),
+(3, 'Chemistry');
+
+
+CREATE TABLE Students_and_Subjects (
+    student_id INT REFERENCES STUDENTS(ID),
+    subject_id INT REFERENCES SUBJECTS(subject_id),
+    PRIMARY KEY (student_id, subject_id)
+);
+
+insert into Students_and_Subjects values
+(1,1),
+(1,2),
+(2,1),
+(2,3),
+(3,2),
+(4,3);
+
+select * from students s
+JOIN Students_and_Subjects ss 
+     ON s.id = ss.student_id
+JOIN SUBJECTS sub 
+     ON ss.subject_id = sub.subject_id
+ORDER BY s.id;
+
+SELECT s.name,
+       s.last_name,
+       s.id_num,
+       COUNT(ss.subject_id) AS subject_count
+FROM STUDENTS s
+LEFT JOIN Students_and_Subjects ss
+     ON s.id = ss.student_id
+GROUP BY s.id, s.name, s.last_name, s.id_num
